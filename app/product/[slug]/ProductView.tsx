@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import ProductCard from "@/components/ui/ProductCard"
 import Button from "@/components/ui/Button"
 import { useCartStore } from "@/lib/store/cart"
+import { useFavoritesStore } from "@/lib/store/favorites"
 import type { Product } from "@/types/product"
 import type { Category } from "@/types/category"
 
@@ -24,9 +25,10 @@ export default function ProductView({
 }: ProductViewProps) {
   const router = useRouter()
   const addItem = useCartStore((s) => s.addItem)
+  const isFavorite = useFavoritesStore((s) => s.isFavorite)
+  const toggleFavorite = useFavoritesStore((s) => s.toggle)
   const [activeImage, setActiveImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
-  const [isWishlisted, setIsWishlisted] = useState(false)
 
   const maxQty = Math.min(product.stock, 99)
 
@@ -225,10 +227,10 @@ export default function ProductView({
               <Button
                 variant="secondary"
                 size="lg"
-                onClick={() => setIsWishlisted((v) => !v)}
-                aria-pressed={isWishlisted}
+                onClick={() => toggleFavorite(product.id)}
+                aria-pressed={isFavorite(product.id)}
               >
-                {isWishlisted ? "♥ في المفضلة" : "♡ المفضلة"}
+                {isFavorite(product.id) ? "♥ في المفضلة" : "♡ المفضلة"}
               </Button>
             </div>
           </div>
