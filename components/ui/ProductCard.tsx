@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import Card from "@/components/ui/Card"
 import Button from "@/components/ui/Button"
+import { useCartStore } from "@/lib/store/cart"
 import type { Product } from "@/types/product"
 
 interface ProductCardProps {
@@ -12,6 +13,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const addItem = useCartStore((s) => s.addItem)
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -48,7 +50,25 @@ export default function ProductCard({ product }: ProductCardProps) {
             <span className="text-lg font-black text-pink-blush-600">
               {product.price} ر.س
             </span>
-            <Button variant="primary" size="sm">
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={(e) => {
+                e.preventDefault()
+                addItem(
+                  {
+                    productId: product.id,
+                    slug: product.slug,
+                    name: product.name,
+                    price: product.price,
+                    image: product.images[0],
+                    stock: product.stock,
+                  },
+                  1
+                )
+              }}
+              disabled={product.stock === 0}
+            >
               أضيفي
             </Button>
           </div>

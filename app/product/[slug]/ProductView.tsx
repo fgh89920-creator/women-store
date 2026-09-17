@@ -3,9 +3,11 @@
 import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import ProductCard from "@/components/ui/ProductCard"
 import Button from "@/components/ui/Button"
+import { useCartStore } from "@/lib/store/cart"
 import type { Product } from "@/types/product"
 import type { Category } from "@/types/category"
 
@@ -20,11 +22,28 @@ export default function ProductView({
   category,
   related,
 }: ProductViewProps) {
+  const router = useRouter()
+  const addItem = useCartStore((s) => s.addItem)
   const [activeImage, setActiveImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [isWishlisted, setIsWishlisted] = useState(false)
 
   const maxQty = Math.min(product.stock, 99)
+
+  const handleAddToCart = () => {
+    addItem(
+      {
+        productId: product.id,
+        slug: product.slug,
+        name: product.name,
+        price: product.price,
+        image: product.images[0],
+        stock: product.stock,
+      },
+      quantity
+    )
+    router.push("/cart")
+  }
 
   return (
     <>
@@ -198,6 +217,7 @@ export default function ProductView({
                 variant="primary"
                 size="lg"
                 disabled={product.stock === 0}
+                onClick={handleAddToCart}
                 className="flex-1"
               >
                 أضيفي للسلة
